@@ -1,13 +1,11 @@
-#include<stdio.h>
+#include "ga.h"
 
-int main() {
+GA::GA()
+{}
 
-        int answer[4] = {1, 6, 8, 9};
+GA::GA(int chrom_size){
+    m_pop_cur = new Population(chrom_size);
 
-        // Print to maxcut.out
-        for (int i = 0; i < 4; i++) {
-                if (i > 0) printf(" ");
-                printf("%d", answer[i]);
-        }
-        printf("\n");
+    // Debug
+    m_pop_cur->print_pop();
 }
