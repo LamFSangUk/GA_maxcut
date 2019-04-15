@@ -9,12 +9,14 @@ using namespace std;
 class Population{
 public:
     Population();
-    Population(int);
+    Population(Graph*, int);
 
+    double get_avg_fitness();
     // For Debug
     void print_pop();
 
 private:
+    Graph* m_graph;
     vector<Chromosome> m_pop;
 };
 

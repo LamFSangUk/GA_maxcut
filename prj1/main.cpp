@@ -29,8 +29,10 @@ int main(){
     g = input_graph();
     int chrom_size = g->get_num_vtx();
     
-    GA* genetic_alg = new GA(chrom_size);
+    GA* genetic_alg = new GA(g, chrom_size);
 
+    genetic_alg->run();
+    
     // Test print
     int ** ge = g->get_edges();
     

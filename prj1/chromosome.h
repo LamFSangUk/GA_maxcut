@@ -8,7 +8,7 @@ using namespace std;
 class Chromosome{
 public:
     Chromosome();
-    Chromosome(int);
+    Chromosome(Graph*, int);
 
     vector<int> get_gene();
 
@@ -16,15 +16,17 @@ public:
     void print_chrom();
 
 private:
+    Graph* m_graph;
     vector<int> m_gene;
+    double m_fitness;
 
     // Genetic Algorithm
     friend class Population;
 
     Chromosome* m_crossover(Chromosome, Chromosome);
     void m_mutation(double);
-
-
+    
+    void m_calculate_fitness();
 };
 
 #endif

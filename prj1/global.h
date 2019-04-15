@@ -7,6 +7,8 @@
 
 #include <vector>
 
+#include "graph.h"
+
 #define NUM_SOLUTION 64
 
 #endif
