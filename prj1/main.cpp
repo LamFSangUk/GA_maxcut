@@ -22,6 +22,22 @@ Graph* input_graph(){
     return g;
 }
 
+/*
+ * Print the best solution.
+ * The result will be translate from chromosome to subgroup of graph.
+ */
+void print_result(Chromosome best_result){
+    vector<int> genes = best_result.get_gene();
+    
+    int vtx_num = 1;
+    for(int gene : genes){
+        if(gene){
+            fprintf(stdout, "%d ", vtx_num);
+        }
+        vtx_num++;
+    }
+}
+
 int main(){
 
     Graph* g;
@@ -31,18 +47,9 @@ int main(){
     
     GA* genetic_alg = new GA(g, chrom_size);
 
-    genetic_alg->run();
+    Chromosome best_chrom = genetic_alg->run();
     
-    // Test print
-    int ** ge = g->get_edges();
-    
-    for(int i=1; i<11;i++){
-        for(int j=1; j<11;j++){ 
-            fprintf(stdout,"%d ",ge[i][j]);
-        }
-        fprintf(stdout,"\n");
-    }
-
+    print_result(best_chrom);
 
     return 0;
 }

@@ -3,14 +3,13 @@
 
 #include "global.h"
 #include "population.h"
-#include "graph.h"
 
 class GA{
 public:
     GA();
     GA(Graph*, int);
 
-    void run();
+    Chromosome run();
 
 private:
     Graph* m_graph;

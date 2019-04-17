@@ -6,9 +6,10 @@
 #include <time.h>
 
 #include <vector>
+#include <cassert>
 
 #include "graph.h"
 
-#define NUM_SOLUTION 64
+#define NUM_SOLUTION 16
 
 #endif
