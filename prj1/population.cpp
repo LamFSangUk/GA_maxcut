@@ -1,5 +1,5 @@
 #include "population.h"
-#include <iostream>
+#include <cmath>
 
 Population::Population()
 {}
@@ -28,21 +28,11 @@ double Population::get_avg_quality(){
         sum_quality += c->m_quality;
     }
 
-   return sum_quality / NUM_SOLUTION;
+    return sum_quality / NUM_SOLUTION;
 }
 
 Chromosome Population::get_best_chromosome(){
-    double best_quality = 0.0f;
-    Chromosome* best_chrom;
-
-    for(int i = 0; i< NUM_SOLUTION; i++){
-        double chrom_quality = m_pop[i]->get_quality();
-
-        if(best_quality < chrom_quality){
-            best_quality = chrom_quality;
-            best_chrom = m_pop[i];
-        }
-    }
+    Chromosome* best_chrom = m_pop[NUM_SOLUTION-1];
 
     return *best_chrom;
 }
@@ -68,7 +58,9 @@ Population* Population::evolution(Population* pop_origin){
     // Replacement
     for(int i = 0 ;i < offspring_list.size(); i++){
         chroms[i] = offspring_list[i];
+#ifndef NDEBUG
         printf("chroms#%d: ",i); chroms[i]->print_chrom(); printf("\n");
+#endif
     }
     
     // Sort population by best quality.
@@ -99,8 +91,9 @@ pair<Chromosome*, Chromosome*> Population::m_select(){
 // Roulette Selection Algorithm
 Chromosome* Population::m_roulette_select(){
     double sum_fitness = m_calculate_fitness(3);
-
+#ifndef NDEBUG
     printf("sum_fitness:%lf\n",sum_fitness);
+#endif
     int point = rand()%(int)(sum_fitness);
 
     assert(sum_fitness > point);
@@ -109,11 +102,13 @@ Chromosome* Population::m_roulette_select(){
     
     double sum = 0.0f;
 
-    for(int i=0; i<NUM_SOLUTION; i++){
+    for(int i=0; i< NUM_SOLUTION; i++){
         Chromosome* c = m_pop[i];
         double fitness = c->get_fitness();
 
-        sum = sum +fitness;
+        assert(fitness > 0);
+
+        sum = sum + fitness;
         //sum = sum + (fitness > 0 ? fitness : 0);
 //        printf("point: %d sum : %lf fitness: %lf\n",point,sum,c->get_fitness());
         if(point < sum){
@@ -121,7 +116,7 @@ Chromosome* Population::m_roulette_select(){
             return c;
         }
     }
-    printf("here Don't");
+//    printf("here Don't");
     exit(-1);
 }
 
@@ -157,4 +152,19 @@ void Population::print_pop(){
         m_pop[i]->print_chrom();
         fprintf(stdout,"Quality : %lf\n",m_pop[i]->get_quality());
     }
+}
+
+bool Population::is_termination_condition(double thresold, clock_t beg, long consumed_time){
+
+    long total_elapsed = get_consumed_msec(beg);
+    
+    if(total_elapsed + consumed_time < TIME_LIMIT){
+        double avg_quality = get_avg_quality();
+        double best_quality = m_pop[NUM_SOLUTION-1]->get_quality();
+
+        assert(best_quality > avg_quality);
+
+        return ((best_quality - avg_quality) / fabs(best_quality)) < thresold;
+    }
+    return true;
 }

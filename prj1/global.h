@@ -9,7 +9,15 @@
 #include <cassert>
 
 #include "graph.h"
+#include "timelimitation.h"
 
-#define NUM_SOLUTION 16
+#define INT_MAX 2147483647
+
+// For genetic algoritm
+#define NUM_SOLUTION            64
+#define THRESHOLD_CONVERGENCE   0.01
+
+
+#define NDEBUG
 
 #endif

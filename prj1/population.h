@@ -22,6 +22,8 @@ public:
 
     static Population* evolution(Population*);
 
+    bool is_termination_condition(double, clock_t, long);
+
     // For Debug
     void print_pop();
 
