@@ -42,7 +42,7 @@ Population* Population::evolution(Population* pop_origin){
     vector<Chromosome*> offspring_list;
     vector<Chromosome*> chroms = pop_origin->m_pop;
 
-    int replace_count = NUM_SOLUTION / 2;
+    int replace_count = NUM_SOLUTION / 4;
 
     while(replace_count--){
         pair<Chromosome*, Chromosome*> selected_chroms = pop_origin->m_select();
@@ -51,15 +51,16 @@ Population* Population::evolution(Population* pop_origin){
         Chromosome* c_2 = selected_chroms.second;
 
         Chromosome* offspring = Chromosome::crossover(c_1,c_2);
-        offspring->m_mutate(0.01);
+        offspring->m_mutate(MUTATION_THRESHOLD);
         offspring_list.push_back(offspring);
     }
 
     // Replacement
     for(int i = 0 ;i < offspring_list.size(); i++){
         chroms[i] = offspring_list[i];
-#ifndef NDEBUG
-        printf("chroms#%d: ",i); chroms[i]->print_chrom(); printf("\n");
+
+#ifdef DETAIL
+        fprintf(stdout, "chroms#%d: ",i); chroms[i]->print_chrom(); printf("\n");
 #endif
     }
     
@@ -79,8 +80,12 @@ pair<Chromosome*, Chromosome*> Population::m_select(){
     //Chromosome* c_2 = m_pop[random];
 
     // Roulette
-    Chromosome* c_1 = m_roulette_select();
-    Chromosome* c_2 = m_roulette_select();
+    //Chromosome* c_1 = m_roulette_select();
+    //Chromosome* c_2 = m_roulette_select();
+
+    // Ranking select
+    Chromosome* c_1 = m_ranking_select();
+    Chromosome* c_2 = m_ranking_select();
     
     assert(c_1);
     assert(c_2);
@@ -91,15 +96,11 @@ pair<Chromosome*, Chromosome*> Population::m_select(){
 // Roulette Selection Algorithm
 Chromosome* Population::m_roulette_select(){
     double sum_fitness = m_calculate_fitness(3);
-#ifndef NDEBUG
-    printf("sum_fitness:%lf\n",sum_fitness);
-#endif
+
     int point = rand()%(int)(sum_fitness);
 
     assert(sum_fitness > point);
 
-//    printf("point: %d\n",point);
-    
     double sum = 0.0f;
 
     for(int i=0; i< NUM_SOLUTION; i++){
@@ -109,14 +110,34 @@ Chromosome* Population::m_roulette_select(){
         assert(fitness > 0);
 
         sum = sum + fitness;
-        //sum = sum + (fitness > 0 ? fitness : 0);
-//        printf("point: %d sum : %lf fitness: %lf\n",point,sum,c->get_fitness());
         if(point < sum){
-//            printf("select : "); c->print_chrom(); printf("\n");
             return c;
         }
     }
-//    printf("here Don't");
+    exit(-1);
+}
+
+// Ranking Selection Algorithm
+Chromosome* Population::m_ranking_select(){
+    double sum_fitness = m_calculate_fitness();
+
+    int point = rand()%(int)(sum_fitness);
+ 
+    assert(sum_fitness > point);
+
+    double sum = 0.0f;
+
+    for(int i=0; i< NUM_SOLUTION; i++){
+        Chromosome* c = m_pop[i];
+        double fitness = c->get_fitness();
+
+        assert(fitness > 0);
+
+        sum = sum + fitness;
+        if(point < sum){
+            return c;
+        }
+    }
     exit(-1);
 }
 
@@ -135,6 +156,18 @@ double Population::m_calculate_fitness(int k){
     for(int i=0; i < NUM_SOLUTION; i++){
         double quality = m_pop[i]->get_quality();
         double fitness = quality - worst_quality + (best_quality - worst_quality) / (k - 1);
+
+        m_pop[i]->set_fitness(fitness);
+        sum_fitness += fitness;
+    }
+    return sum_fitness;
+}
+
+double Population::m_calculate_fitness(){
+    double sum_fitness = 0.0f;
+
+    for(int i=0; i < NUM_SOLUTION; i++){
+        double fitness = MAX_FITNESS + (NUM_SOLUTION - i) * (MIN_FITNESS - MAX_FITNESS) / (NUM_SOLUTION - 1);
 
         m_pop[i]->set_fitness(fitness);
         sum_fitness += fitness;

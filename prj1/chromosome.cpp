@@ -1,5 +1,8 @@
 #include "chromosome.h"
 
+/*
+ *  ===== Constructors =====
+ */
 Chromosome::Chromosome()
 {}
 
@@ -14,25 +17,41 @@ Chromosome::Chromosome(Graph* g, int size){
     for(int i = 0; i < size; i++){
         m_gene.push_back(rand() % 2);
     }
-
+#ifdef NORMALIZE
+    // Normailize
+    m_normalize();
+#endif
     // Calculate the initial quality
     m_calculate_quality();
+}
+
+/*
+ *  ===== Algorithms for GA =====
+ */
+
+void Chromosome::m_normalize(){
+
+    // First vtx belongs to S group
+    if(m_gene[0] == 0){
+        for(int i=0; i < m_gene.size(); i++){
+            m_gene[i] = !m_gene[i];
+        }
+    }
 }
 
 Chromosome* Chromosome::crossover(Chromosome* husband, Chromosome* wife){
     // Crossover algorithm for GA
     Chromosome* offspring = new Chromosome(husband->m_graph);
     
-    offspring->m_one_point_crossover(husband, wife);
-    //offspring->m_gene.insert(offspring->m_gene.end(), husband->m_gene.begin(), husband->m_gene.begin());
-    //for(int i=0;i<husband->m_gene.size();i++){
+    // One point crossover
+    //offspring->m_one_point_crossover(husband, wife);
 
-    //offspring->m_gene.push_back(husband->m_gene[i]);
-    //}
-    //printf("husband\t : ");husband->print_chrom();printf("\n");
-    //printf("wife\t : ");    wife->print_chrom(); printf("\n");
-    //printf("offspring: ");offspring->print_chrom();printf("\n");
-
+    // Eqaul Crossover
+    offspring->m_equal_crossover(husband, wife);
+#ifdef NORMALIZE
+    // Normalize
+    offspring->m_normalize();
+#endif
     offspring->m_calculate_quality();
 
     return offspring;    
@@ -49,21 +68,48 @@ void Chromosome::m_one_point_crossover(Chromosome* husband, Chromosome* wife){
 
     int crosspoint = rand() % length;
 
+    // Get genes from father
     for(int i=0;i<crosspoint;i++){
         m_gene.push_back(husband_gene[i]);
-        //m_gene.insert(m_gene.end(), husband_gene.begin(), husband_gene.end());
     }
+    // Get genes from mother
     for(int i=crosspoint;i<length;i++){
         m_gene.push_back(wife_gene[i]);
     }
-    //m_gene.insert(m_gene.end(), husband_gene.begin(), husband_gene.begin() + crosspoint);    
-    //m_gene.insert(m_gene.end(), wife_gene.begin() + crosspoint, wife_gene.end());
+}
+
+void Chromosome::m_equal_crossover(Chromosome* husband, Chromosome* wife){
+     
+    if(husband->get_quality() < wife->get_quality()){ // Swap only if wife has better quality than husband.
+        Chromosome* temp = husband;
+        husband = wife;
+        wife = temp;
+    }
+
+    assert(husband->get_quality()>=wife->get_quality());
+
+    vector<int> husband_gene = husband->get_gene();
+    vector<int> wife_gene = wife->get_gene(); 
+
+    int length = husband_gene.size();
+
+    for(int i=0; i < length; i++){
+        double random = (double)rand() / (double)RAND_MAX;
+
+        if(random > EQUAL_CROSSOVER_THRESHOLD)
+            m_gene.push_back(wife_gene[i]);
+        else
+            m_gene.push_back(husband_gene[i]);
+    }
 }
 
 void Chromosome::m_mutate(double mutation_threshold){
     // Mutation algorithm for GA
     m_typical_mutate(mutation_threshold);
-
+#ifdef NORMALIZE
+    // Normalize
+    m_normalize();
+#endif
     m_calculate_quality();
 }
 
@@ -80,6 +126,9 @@ void Chromosome::m_typical_mutate(double mutation_threshold){
     }
 }
 
+/*
+ *  ===== Getter & Setter =====
+ */
 vector<int> Chromosome::get_gene(){
     return m_gene;
 }
@@ -94,12 +143,6 @@ void Chromosome::set_fitness(double fitness){
 
 double Chromosome::get_fitness(){
     return m_fitness;
-}
-
-void Chromosome::print_chrom(){
-    for(auto gene : m_gene){
-        fprintf(stdout, "%d ", gene);
-    }
 }
 
 void Chromosome::m_calculate_quality(){
@@ -128,4 +171,10 @@ bool Chromosome::operator<(const Chromosome& c){
 
 bool Chromosome::comp_by_quality(Chromosome* c_1, Chromosome* c_2){
     return *c_1<*c_2;
+}
+
+void Chromosome::print_chrom(){
+    for(auto gene : m_gene){
+        fprintf(stdout, "%d ", gene);
+    }
 }

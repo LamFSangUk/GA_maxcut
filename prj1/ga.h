@@ -4,6 +4,8 @@
 #include "global.h"
 #include "population.h"
 
+#define NORMALIZE
+
 class GA{
 public:
     GA();

@@ -6,7 +6,8 @@
 
 #include <algorithm>
 
-#define NUM_SELECTION 10
+#define MAX_FITNESS 3.0
+#define MIN_FITNESS 1.0
 
 using namespace std;
 
@@ -34,7 +35,9 @@ private:
 
     pair<Chromosome*, Chromosome*> m_select();
     Chromosome* m_roulette_select();
+    Chromosome* m_ranking_select();
     double m_calculate_fitness(int);
+    double m_calculate_fitness();
 };
 
 #endif
