@@ -3,6 +3,8 @@
 
 #include "global.h"
 
+#define NORMALIZE
+
 #define EQUAL_CROSSOVER_THRESHOLD 0.6
 #define MUTATION_THRESHOLD 0.01
 
