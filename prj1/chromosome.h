@@ -18,6 +18,8 @@ public:
     Chromosome(Graph*);
     Chromosome(Graph*, int);
 
+    Chromosome(const Chromosome &ch);
+
     /* Getter & Setters */
     vector<int>     get_gene();
     double          get_quality();
@@ -26,6 +28,9 @@ public:
    
     /* Interface for GA */
     static Chromosome* crossover(Chromosome*,Chromosome*);
+    static Chromosome* mutate(Chromosome*);
+
+    static Chromosome* local_search(Chromosome*);
 
     /* Operator overloading */
     bool operator<(const Chromosome&);
@@ -43,12 +48,12 @@ private:
 
     friend class Population;
 
-    /* Genetic Algoritm methods */
+    /* Genetic Algorithm methods */
     void m_normalize();
     void m_one_point_crossover(Chromosome*, Chromosome*);
     void m_equal_crossover(Chromosome*, Chromosome*);
-    void m_mutate(double);
     void m_typical_mutate(double);
+    int m_variation_moving_vertex(int);
     
     void m_calculate_quality();
 };

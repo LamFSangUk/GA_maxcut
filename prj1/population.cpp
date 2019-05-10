@@ -1,6 +1,9 @@
 #include "population.h"
 #include <cmath>
 
+/*
+ *  ===== Constructors =====
+ */
 Population::Population()
 {}
 
@@ -42,7 +45,7 @@ Population* Population::evolution(Population* pop_origin){
     vector<Chromosome*> offspring_list;
     vector<Chromosome*> chroms = pop_origin->m_pop;
 
-    int replace_count = NUM_SOLUTION / 4;
+    int replace_count = NUM_SOLUTION / 2;
 
     while(replace_count--){
         pair<Chromosome*, Chromosome*> selected_chroms = pop_origin->m_select();
@@ -50,9 +53,15 @@ Population* Population::evolution(Population* pop_origin){
         Chromosome* c_1 = selected_chroms.first;
         Chromosome* c_2 = selected_chroms.second;
 
+        // Crossover
         Chromosome* offspring = Chromosome::crossover(c_1,c_2);
-        offspring->m_mutate(MUTATION_THRESHOLD);
+
+        // Mutation
+        offspring = Chromosome::mutate(offspring);
         offspring_list.push_back(offspring);
+
+        // Local optimization
+        offspring = Chromosome::local_search(offspring);
     }
 
     // Replacement

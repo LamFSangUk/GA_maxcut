@@ -14,7 +14,7 @@
 #define INT_MAX 2147483647
 
 // For genetic algoritm
-#define NUM_SOLUTION            128
+#define NUM_SOLUTION            50
 #define THRESHOLD_CONVERGENCE   0.001
 
 

@@ -25,6 +25,13 @@ Chromosome::Chromosome(Graph* g, int size){
     m_calculate_quality();
 }
 
+Chromosome::Chromosome(const Chromosome &ch){
+    m_graph = ch.m_graph;
+    copy(ch.m_gene.begin(), ch.m_gene.end(), back_inserter(m_gene));
+    m_quality = ch.m_quality;
+    m_fitness = ch.m_fitness;
+}
+
 /*
  *  ===== Algorithms for GA =====
  */
@@ -43,10 +50,10 @@ Chromosome* Chromosome::crossover(Chromosome* husband, Chromosome* wife){
     // Crossover algorithm for GA
     Chromosome* offspring = new Chromosome(husband->m_graph);
     
-    // One point crossover
+    // - One-point crossover
     //offspring->m_one_point_crossover(husband, wife);
 
-    // Eqaul Crossover
+    // - Uniform Crossover
     offspring->m_equal_crossover(husband, wife);
 #ifdef NORMALIZE
     // Normalize
@@ -55,6 +62,62 @@ Chromosome* Chromosome::crossover(Chromosome* husband, Chromosome* wife){
     offspring->m_calculate_quality();
 
     return offspring;    
+}
+
+Chromosome* Chromosome::mutate(Chromosome* chrom){
+    chrom->m_typical_mutate(MUTATION_THRESHOLD);
+#ifdef NORMALIZE
+    chrom->m_normalize();
+#endif
+
+    chrom->m_calculate_quality();
+
+    return chrom;
+}
+
+Chromosome* Chromosome::local_search(Chromosome* chrom){
+    // TODO: Generate a random permutation
+    int * perm = new int[chrom->m_gene.size()];
+    for(int i=0;i<chrom->m_gene.size();i++){
+        perm[i] = i;
+    }
+
+    bool improved = true;
+
+    while(improved){
+        improved = false;
+        for(int i=0; i<chrom->m_gene.size();i++){
+            int variation = 0;
+            if((variation = chrom->m_variation_moving_vertex(perm[i])) > 0){
+
+                // local dim serach
+                chrom->m_gene[perm[i]] = 1 - chrom->m_gene[perm[i]];
+
+                chrom->m_quality += variation;
+
+                int calc = chrom->m_quality;
+
+                chrom->m_normalize();
+                chrom->m_calculate_quality();
+                assert(calc == chrom->m_quality);
+
+                improved = true;
+            }
+        }
+    }
+
+    return chrom;
+}
+
+int Chromosome::m_variation_moving_vertex(int idx){
+    int ** edges = m_graph->get_edges();
+    int variation = 0;
+    
+    for(int i=0;i<m_gene.size();i++){
+        variation += (-1 * (m_gene[idx] ^ m_gene[i]) * edges[idx+1][i+1] + (m_gene[idx]==m_gene[i]) * edges[idx+1][i+1]);
+    }
+
+    return variation;
 }
 
 void Chromosome::m_one_point_crossover(Chromosome* husband, Chromosome* wife){
@@ -103,16 +166,6 @@ void Chromosome::m_equal_crossover(Chromosome* husband, Chromosome* wife){
     }
 }
 
-void Chromosome::m_mutate(double mutation_threshold){
-    // Mutation algorithm for GA
-    m_typical_mutate(mutation_threshold);
-#ifdef NORMALIZE
-    // Normalize
-    m_normalize();
-#endif
-    m_calculate_quality();
-}
-
 void Chromosome::m_typical_mutate(double mutation_threshold){
     int length = m_gene.size();
     
@@ -153,9 +206,9 @@ void Chromosome::m_calculate_quality(){
 
     for(int i = 0; i < m_gene.size(); i++){
         // m_gene.size is equal to num_vtx
-        for(int j = 0; j < m_gene.size(); j++){
+        for(int j = i+1; j < m_gene.size(); j++){
             
-            m_quality += (m_gene[i] * (m_gene[i] ^ m_gene[j]) * edges[i+1][j+1]);
+            m_quality += ((m_gene[i] ^ m_gene[j]) * edges[i+1][j+1]);
         }
     }
 }
