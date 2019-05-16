@@ -21,7 +21,8 @@ Population::Population(Graph *g, int chrom_size){
     }
     
     // Sort population by best quality.
-    sort(m_pop.begin(), m_pop.end(), Chromosome::comp_by_quality); 
+    sort(m_pop.begin(), m_pop.end(), Chromosome::comp_by_quality);
+    m_calculate_ham_dist();
 }
 
 double Population::get_avg_quality(){
@@ -38,6 +39,10 @@ Chromosome Population::get_best_chromosome(){
     Chromosome* best_chrom = m_pop[NUM_SOLUTION-1];
 
     return *best_chrom;
+}
+
+double Population::get_avg_hamming_distance(){
+    return m_avg_hamming_distance;
 }
 
 Population* Population::evolution(Population* pop_origin){
@@ -60,8 +65,12 @@ Population* Population::evolution(Population* pop_origin){
         offspring = Chromosome::mutate(offspring);
         offspring_list.push_back(offspring);
 
+        // Quality calculation
+        offspring->m_calculate_quality();
+
         // Local optimization
         offspring = Chromosome::local_search(offspring);
+
     }
 
     // Replacement
@@ -72,6 +81,7 @@ Population* Population::evolution(Population* pop_origin){
     // Sort population by best quality.
     sort(chroms.begin(), chroms.end(), Chromosome::comp_by_quality);
     pop_future->set_pop(chroms);
+    pop_future->m_calculate_ham_dist();
 
     return pop_future;
 }
@@ -204,12 +214,13 @@ bool Population::is_termination_condition(double thresold, clock_t beg, long con
 
         //return ((best_quality - avg_quality) / fabs(best_quality)) < thresold;
 
-        double convergence_ratio = m_check_convergence();
+        /*double convergence_ratio = m_check_convergence();
         fprintf(stdout, "Convergence: %lf\n",convergence_ratio);
 
         if(convergence_ratio < 0.9){
             return false;
-        }
+        }*/
+        if(m_avg_hamming_distance > 0.05) return false;
     }
     return true;
 }
@@ -230,4 +241,31 @@ double Population::m_check_convergence(){
     if(max_count < count) max_count = count;
 
     return (double)max_count/m_pop.size();
+    
+}
+
+void Population::m_calculate_ham_dist(){
+    
+    // create saving box to keep hamming distances
+    m_hamming_distance = new int*[NUM_SOLUTION];
+    for(int i=0;i<NUM_SOLUTION;i++){
+        m_hamming_distance[i] = new int[NUM_SOLUTION];
+    }
+    
+    int n = NUM_SOLUTION;
+    int sum_ham_dist = 0;
+
+    for(int i=0;i<n-1;i++){
+        for(int j=i+1;j<n;j++){
+            int ham_dist = Chromosome::calculate_hamming_distance(m_pop[i],m_pop[j]);
+            m_hamming_distance[i][j] = m_hamming_distance[j][i] = ham_dist;
+            sum_ham_dist += ham_dist;
+        }
+    }
+
+    m_avg_hamming_distance = (double)(2*sum_ham_dist) / (n*(n-1));
+
+    // standarization
+    int length = m_pop[0]->get_gene().size();
+    m_avg_hamming_distance /= length;
 }

@@ -35,10 +35,12 @@ Chromosome GA::run(){
 #ifdef EXPERIMENT
 
         double avg_quality = m_pop_cur->get_avg_quality();
-        
+        double avg_ham_dist = m_pop_cur->get_avg_hamming_distance();
+
         avg_quality = m_pop_next->get_avg_quality();
         fprintf(stdout, "Generation #%5d\nAvg  Quality : %lf\n",t++,avg_quality);
 
+        fprintf(stdout, "Avg Hamming Dist: %lf\n",avg_ham_dist);
         fprintf(stdout, "Global Best: %lf\n",best_chrom_ever.get_quality());
         fprintf(stdout, "Best Quality : %lf\n",best_chrom.get_quality());
         fprintf(stdout, "Best Chromosome : "); best_chrom.print_chrom();

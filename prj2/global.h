@@ -14,7 +14,7 @@
 #define INT_MAX 2147483647
 
 // For genetic algoritm
-#define NUM_SOLUTION            50
+#define NUM_SOLUTION            30
 #define THRESHOLD_CONVERGENCE   0.001
 
 
@@ -24,7 +24,7 @@
 
 #ifdef EXPERIMENT
 #define RESULT
-#define DETAIL
+//#define DETAIL
 #endif
 
 #ifdef RELEASE

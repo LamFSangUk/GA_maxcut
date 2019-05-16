@@ -59,7 +59,6 @@ Chromosome* Chromosome::crossover(Chromosome* husband, Chromosome* wife){
     // Normalize
     offspring->m_normalize();
 #endif
-    offspring->m_calculate_quality();
 
     return offspring;    
 }
@@ -69,8 +68,6 @@ Chromosome* Chromosome::mutate(Chromosome* chrom){
 #ifdef NORMALIZE
     chrom->m_normalize();
 #endif
-
-    chrom->m_calculate_quality();
 
     return chrom;
 }
@@ -97,18 +94,31 @@ Chromosome* Chromosome::local_search(Chromosome* chrom){
 
                 chrom->m_quality += variation;
 
-                int calc = chrom->m_quality;
+                //int calc = chrom->m_quality;
 
-                chrom->m_normalize();
-                chrom->m_calculate_quality();
-                assert(calc == chrom->m_quality);
+                //chrom->m_calculate_quality();
+                //assert(calc == chrom->m_quality);
 
                 improved = true;
             }
         }
     }
 
+#ifdef NORMALIZE    
+    chrom->m_normalize();
+#endif
+
     return chrom;
+}
+
+int Chromosome::calculate_hamming_distance(Chromosome* c1, Chromosome*c2){
+    int ham_dist = 0;
+    for(int i=0;i<c1->m_gene.size();i++){
+        ham_dist += (c1->m_gene[i] ^ c2->m_gene[i]);
+        
+    }
+    //printf("ham_dist:%d\n",ham_dist);
+    return ham_dist;
 }
 
 int Chromosome::m_variation_moving_vertex(int idx){

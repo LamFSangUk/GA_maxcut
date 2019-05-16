@@ -3,7 +3,7 @@
 
 #include <time.h>
 
-#define TIME_LIMIT 178000           //178s
+#define TIME_LIMIT 175000           //175s
 
 clock_t start_tick();
 long get_consumed_msec(clock_t prev);

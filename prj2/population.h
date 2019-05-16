@@ -23,6 +23,7 @@ public:
     double get_avg_quality();
     Chromosome get_best_chromosome();
     void set_pop(vector<Chromosome*>);
+    double get_avg_hamming_distance();
 
     /* Interface for GA */
     static Population* evolution(Population*);
@@ -33,9 +34,11 @@ public:
     void print_pop();
 
 private:
-    int m_num_generation;
-    Graph* m_graph;
-    vector<Chromosome*> m_pop;
+    int                     m_num_generation;
+    Graph *                 m_graph;
+    vector<Chromosome*>     m_pop;
+    int **                  m_hamming_distance;
+    double                  m_avg_hamming_distance;
 
     /* Genetic Algorithm methods */
     pair<Chromosome*, Chromosome*> m_select();
@@ -45,6 +48,8 @@ private:
     double m_calculate_fitness();
 
     double m_check_convergence();
+
+    void m_calculate_ham_dist(); 
 };
 
 #endif

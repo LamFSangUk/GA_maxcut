@@ -33,6 +33,7 @@ public:
     static Chromosome* mutate(Chromosome*);
 
     static Chromosome* local_search(Chromosome*);
+    static int calculate_hamming_distance(Chromosome*, Chromosome*);
 
     /* Operator overloading */
     bool operator<(const Chromosome&);
