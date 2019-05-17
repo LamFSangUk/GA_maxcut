@@ -4,7 +4,7 @@ do
 
     make all
 
-    for i in {1..5}
+    for i in {1..30}
     do
         timeout 180 make run 2>&1
         cp maxcut.out "output/result_$i.out"
@@ -15,4 +15,6 @@ do
     cp -r output ../../shared/test/$name
 done
 
-echo "Done"
+echo "Phase 1 Done"
+
+echo "Copy"

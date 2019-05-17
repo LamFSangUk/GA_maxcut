@@ -9,6 +9,8 @@
 
 #define UNIFORM_CROSSOVER_THRESHOLD 0.6
 #define MUTATION_THRESHOLD 0.01
+#define MIN_MUTATION_RATIO 0.01
+#define MAX_MUTATION_RATIO 0.05
 
 using namespace std;
 
@@ -30,7 +32,7 @@ public:
    
     /* Interface for GA */
     static Chromosome* crossover(Chromosome*,Chromosome*);
-    static Chromosome* mutate(Chromosome*);
+    static Chromosome* mutate(Chromosome*,double);
 
     static Chromosome* local_search(Chromosome*);
     static int calculate_hamming_distance(Chromosome*, Chromosome*);

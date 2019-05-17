@@ -24,6 +24,7 @@ public:
     Chromosome get_best_chromosome();
     void set_pop(vector<Chromosome*>);
     double get_avg_hamming_distance();
+    double get_mutation_ratio();
 
     /* Interface for GA */
     static Population* evolution(Population*);
@@ -39,17 +40,20 @@ private:
     vector<Chromosome*>     m_pop;
     int **                  m_hamming_distance;
     double                  m_avg_hamming_distance;
+    double                  m_mutation_ratio;
 
     /* Genetic Algorithm methods */
     pair<Chromosome*, Chromosome*> m_select();
     Chromosome* m_roulette_select();
     Chromosome* m_ranking_select();
+    Chromosome* m_farthest_select(Chromosome*);
     double m_calculate_fitness(int);
     double m_calculate_fitness();
 
     double m_check_convergence();
 
     void m_calculate_ham_dist(); 
+    void m_calculate_mutation_ratio();
 };
 
 #endif

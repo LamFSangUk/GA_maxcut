@@ -63,8 +63,8 @@ Chromosome* Chromosome::crossover(Chromosome* husband, Chromosome* wife){
     return offspring;    
 }
 
-Chromosome* Chromosome::mutate(Chromosome* chrom){
-    chrom->m_typical_mutate(MUTATION_THRESHOLD);
+Chromosome* Chromosome::mutate(Chromosome* chrom, double mutation_ratio = MUTATION_THRESHOLD){
+    chrom->m_typical_mutate(mutation_ratio);
 #ifdef NORMALIZE
     chrom->m_normalize();
 #endif

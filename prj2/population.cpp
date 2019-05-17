@@ -22,7 +22,9 @@ Population::Population(Graph *g, int chrom_size){
     
     // Sort population by best quality.
     sort(m_pop.begin(), m_pop.end(), Chromosome::comp_by_quality);
+    
     m_calculate_ham_dist();
+    m_mutation_ratio = MIN_MUTATION_RATIO;
 }
 
 double Population::get_avg_quality(){
@@ -44,6 +46,9 @@ Chromosome Population::get_best_chromosome(){
 double Population::get_avg_hamming_distance(){
     return m_avg_hamming_distance;
 }
+double Population::get_mutation_ratio(){
+    return m_mutation_ratio;
+}
 
 Population* Population::evolution(Population* pop_origin){
     Population* pop_future = new Population(pop_origin->m_graph);       // Next generation
@@ -62,7 +67,8 @@ Population* Population::evolution(Population* pop_origin){
         Chromosome* offspring = Chromosome::crossover(c_1,c_2);
 
         // Mutation
-        offspring = Chromosome::mutate(offspring);
+        double mut_ratio = pop_origin->get_mutation_ratio();
+        offspring = Chromosome::mutate(offspring,mut_ratio);
         offspring_list.push_back(offspring);
 
         // Quality calculation
@@ -82,6 +88,7 @@ Population* Population::evolution(Population* pop_origin){
     sort(chroms.begin(), chroms.end(), Chromosome::comp_by_quality);
     pop_future->set_pop(chroms);
     pop_future->m_calculate_ham_dist();
+    pop_future->m_calculate_mutation_ratio();
 
     return pop_future;
 }
@@ -100,7 +107,15 @@ pair<Chromosome*, Chromosome*> Population::m_select(){
 
     // Ranking select
     Chromosome* c_1 = m_ranking_select();
-    Chromosome* c_2 = m_ranking_select();
+    //Chromosome* c_2 = m_ranking_select();
+
+    Chromosome* c_2;
+    if(m_avg_hamming_distance < 0.1){
+        // Find the farthest hamming distance    
+        c_2 = m_farthest_select(c_1);
+    }else{
+        c_2 = m_ranking_select();
+    }
     
     assert(c_1);
     assert(c_2);
@@ -154,6 +169,23 @@ Chromosome* Population::m_ranking_select(){
         }
     }
     exit(-1);
+}
+Chromosome* Population::m_farthest_select(Chromosome* mate){
+    // Find idx
+    int idx = 0;
+    for(int i=0;i<NUM_SOLUTION;i++){
+        if(*m_pop[i]==*mate){idx = i; break;}
+    }
+
+    int max_dist = 0;
+    int idx_farthest = 0;
+    for(int i=0;i<NUM_SOLUTION;i++){
+        if(max_dist < m_hamming_distance[idx][i]){
+            max_dist = m_hamming_distance[idx][i];
+            idx_farthest = i;
+        }
+    }
+    return m_pop[idx_farthest];
 }
 
 double Population::m_calculate_fitness(int k){
@@ -268,4 +300,16 @@ void Population::m_calculate_ham_dist(){
     // standarization
     int length = m_pop[0]->get_gene().size();
     m_avg_hamming_distance /= length;
+}
+
+void Population::m_calculate_mutation_ratio(){
+    double min = MIN_MUTATION_RATIO;
+    double max = MAX_MUTATION_RATIO;
+
+    double x = m_avg_hamming_distance;
+    if(x>0.5) x= 0.5;
+
+    assert(x<=0.5);
+
+    m_mutation_ratio = min + (max-min) * cos(x*M_PI);
 }
