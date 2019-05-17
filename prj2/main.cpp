@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ga.h"
+//#include "ls.h"
 #include "graph.h"
 
 Graph* input_graph(){
@@ -46,8 +47,10 @@ int main(){
     int chrom_size = g->get_num_vtx();
     
     GA* genetic_alg = new GA(g, chrom_size);
+    //LS* ls = new LS(g, chrom_size);
 
     Chromosome best_chrom = genetic_alg->run();
+    //Chromosome best_chrom = ls->run();
     
     print_result(best_chrom);
 

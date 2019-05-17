@@ -38,7 +38,7 @@ Chromosome GA::run(){
         double avg_ham_dist = m_pop_cur->get_avg_hamming_distance();
 
         avg_quality = m_pop_next->get_avg_quality();
-        fprintf(stdout, "Generation #%5d\nAvg  Quality : %lf\n",t++,avg_quality);
+        fprintf(stdout, "Generation #%5d\nAvg  Quality : %lf\n",t,avg_quality);
 
         fprintf(stdout, "Avg Hamming Dist: %lf\n",avg_ham_dist);
         fprintf(stdout, "Global Best: %lf\n",best_chrom_ever.get_quality());
@@ -53,6 +53,7 @@ Chromosome GA::run(){
         fprintf(stdout, "\n\n");
 #endif
         consumed_msec = get_consumed_msec(loop_beg);
+        t++;
     }
     
     return best_chrom_ever;

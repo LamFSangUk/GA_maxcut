@@ -93,6 +93,19 @@ Population* Population::evolution(Population* pop_origin){
     return pop_future;
 }
 
+void Population::local_search(Population* pop){
+    for(int i=0;i<NUM_SOLUTION;i++){
+        Chromosome* c = pop->m_pop[i];
+
+        c->m_calculate_quality();
+
+        c = Chromosome::local_search(c);
+
+        pop->m_pop[i] = c;
+    }
+    sort(pop->m_pop.begin(), pop->m_pop.end(), Chromosome::comp_by_quality);
+}
+
 pair<Chromosome*, Chromosome*> Population::m_select(){
     // Selection algorithm for GA
     

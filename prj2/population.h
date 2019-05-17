@@ -29,6 +29,9 @@ public:
     /* Interface for GA */
     static Population* evolution(Population*);
 
+    /* Interface for LS */
+    static void local_search(Population*);
+
     bool is_termination_condition(double, clock_t, long);
 
     /* print for debug */
