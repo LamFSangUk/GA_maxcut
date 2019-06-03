@@ -28,10 +28,10 @@ Graph* input_graph(){
  * The result will be translate from chromosome to subgroup of graph.
  */
 void print_result(Chromosome best_result){
-    vector<int> genes = best_result.get_gene();
-    
+    vector<bool> genes = best_result.get_gene();
+
     int vtx_num = 1;
-    for(int gene : genes){
+    for(bool gene : genes){
         if(gene){
             fprintf(stdout, "%d ", vtx_num);
         }
@@ -45,13 +45,13 @@ int main(){
 
     g = input_graph();
     int chrom_size = g->get_num_vtx();
-    
+
     GA* genetic_alg = new GA(g, chrom_size);
     //LS* ls = new LS(g, chrom_size);
 
     Chromosome best_chrom = genetic_alg->run();
     //Chromosome best_chrom = ls->run();
-    
+
     print_result(best_chrom);
 
     return 0;

@@ -298,43 +298,12 @@ bool Population::is_termination_condition(double thresold, clock_t beg, long con
 
     long total_elapsed = get_consumed_msec(beg);
 
-    if(total_elapsed + consumed_time < TIME_LIMIT){
-        //double avg_quality = get_avg_quality();
-        //double best_quality = m_pop[NUM_SOLUTION-1]->get_quality();
+    if(total_elapsed + consumed_time < (TIME_LIMIT * m_graph->get_num_vtx() / 3000.0) - 500){
 
-        //assert(best_quality > avg_quality);
-
-        //return ((best_quality - avg_quality) / fabs(best_quality)) < thresold;
-
-        /*double convergence_ratio = m_check_convergence();
-        fprintf(stdout, "Convergence: %lf\n",convergence_ratio);
-
-        if(convergence_ratio < 0.9){
-            return false;
-        }*/
         //if(m_avg_hamming_distance > 0.05) return false;
         return false;
     }
     return true;
-}
-
-double Population::m_check_convergence(){
-    int count = 1;
-    int max_count = 1;
-
-    for(int i=1;i<NUM_SOLUTION;i++){
-        if(m_pop[i-1]->get_quality() == m_pop[i]->get_quality()){
-            count++;
-        }
-        else{
-            if(max_count < count) max_count = count;
-            count = 1;
-        }
-    }
-    if(max_count < count) max_count = count;
-
-    return (double)max_count/m_pop.size();
-
 }
 
 void Population::m_calculate_ham_dist(){

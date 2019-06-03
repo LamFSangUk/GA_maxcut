@@ -102,8 +102,8 @@ int Chromosome::m_variation_moving_vertex(int idx){
 
 void Chromosome::m_one_point_crossover(Chromosome* husband, Chromosome* wife){
     // One-point crossover
-    vector<int> husband_gene = husband->get_gene();
-    vector<int> wife_gene = wife->get_gene();
+    vector<bool> husband_gene = husband->get_gene();
+    vector<bool> wife_gene = wife->get_gene();
 
     int length = husband_gene.size();
 
@@ -131,8 +131,8 @@ void Chromosome::m_uniform_crossover(Chromosome* husband, Chromosome* wife){
 
     assert(husband->get_quality()>=wife->get_quality());
 
-    vector<int> husband_gene = husband->get_gene();
-    vector<int> wife_gene = wife->get_gene();
+    vector<bool> husband_gene = husband->get_gene();
+    vector<bool> wife_gene = wife->get_gene();
 
     int length = husband_gene.size();
 
@@ -208,7 +208,7 @@ void Chromosome::m_one_bit_flip_local_search(Chromosome* chrom){
 
 void Chromosome::m_fiduccia_mattheyses(Chromosome* chrom){
     int ** edges = chrom->m_graph->get_edges();
-    vector<int>& gene = chrom->m_gene;
+    vector<bool>& gene = chrom->m_gene;
     int size = chrom->m_gene.size();
 
     vector<int> gains(size);
@@ -276,7 +276,7 @@ void Chromosome::m_fiduccia_mattheyses(Chromosome* chrom){
 /*
  *  ===== Getter & Setter =====
  */
-vector<int> Chromosome::get_gene(){
+vector<bool> Chromosome::get_gene(){
     return m_gene;
 }
 
@@ -327,6 +327,7 @@ bool Chromosome::comp_by_quality(Chromosome* c_1, Chromosome* c_2){
 
 void Chromosome::print_chrom(){
     for(auto gene : m_gene){
-        fprintf(stdout, "%d ", gene);
+        if(gene) fprintf(stdout, "1 ");
+        else fprintf(stdout, "0 ");
     }
 }

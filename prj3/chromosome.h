@@ -27,7 +27,7 @@ public:
     ~Chromosome();
 
     /* Getter & Setters */
-    vector<int>     get_gene();
+    vector<bool>    get_gene();
     double          get_quality();
     void            set_fitness(double);
     double          get_fitness();
@@ -50,7 +50,7 @@ public:
 
 private:
     Graph*          m_graph;
-    vector<int>     m_gene;
+    vector<bool>    m_gene;
     double          m_quality;
     double          m_fitness;
 

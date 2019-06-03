@@ -56,8 +56,6 @@ private:
     double m_calculate_fitness(int);
     double m_calculate_fitness();
 
-    double m_check_convergence();
-
     void m_calculate_ham_dist();
     void m_calculate_mutation_ratio();
 };
