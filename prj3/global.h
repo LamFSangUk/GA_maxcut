@@ -20,8 +20,8 @@
 
 
 // Mode
-#define EXPERIMENT
-//#define RELEASE
+//#define EXPERIMENT
+#define RELEASE
 
 #ifdef EXPERIMENT
 #define RESULT

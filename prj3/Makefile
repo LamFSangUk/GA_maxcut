@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -g -pg -W -Wall -O3
+CFLAGS = -W -Wall -O3
 TARGET = maxcut
 OBJECTS = main.o graph.o timelimitation.o ga.o population.o chromosome.o
 
@@ -22,4 +22,4 @@ population.o : population.cpp
 chromosome.o : chromosome.cpp
 
 clean:
-	rm *.o $(TARGET)
+	rm *.out *.o $(TARGET)

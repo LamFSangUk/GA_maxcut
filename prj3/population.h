@@ -35,7 +35,7 @@ public:
     /* Interface for LS */
     static void local_search(Population*);
 
-    bool is_termination_condition(double, clock_t, long);
+    bool is_termination_condition(clock_t);
 
     /* print for debug */
     void print_pop();

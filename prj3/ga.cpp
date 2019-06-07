@@ -6,6 +6,9 @@ GA::GA()
 GA::GA(Graph* g, int chrom_size){
     m_graph = g;
 
+    clock_t beg = start_tick();
+    m_beg_tick = beg;
+
     m_pop_cur = new Population(m_graph, chrom_size);
 
     m_convergence_threshold = THRESHOLD_CONVERGENCE;
@@ -16,15 +19,12 @@ Chromosome GA::run(){
     srand(time(NULL));
 
     Chromosome best_chrom_ever;
-    clock_t beg = start_tick();
-    long consumed_msec = 0;
     int t=1;
-    while(!m_pop_cur->is_termination_condition(m_convergence_threshold, beg, consumed_msec)){
-    
+    while(!m_pop_cur->is_termination_condition(m_beg_tick)){
+
         // One loop of genetic algorithm
-        clock_t loop_beg = start_tick();
         m_pop_next = Population::evolution(m_pop_cur);
-        
+
         m_pop_cur = m_pop_next;
 
         Chromosome best_chrom = m_pop_cur->get_best_chromosome();
@@ -52,9 +52,8 @@ Chromosome GA::run(){
 
         fprintf(stdout, "\n\n");
 #endif
-        consumed_msec = get_consumed_msec(loop_beg);
         t++;
     }
-    
+
     return best_chrom_ever;
 }

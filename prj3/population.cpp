@@ -32,6 +32,7 @@ Population::Population(Graph *g, int chrom_size){
 
     m_calculate_ham_dist();
     m_calculate_mutation_ratio();
+    m_num_generation = 1;
 }
 
 Population::~Population(){
@@ -130,6 +131,7 @@ Population* Population::evolution(Population* pop_origin){
     pop_future->set_pop(chroms);
     pop_future->m_calculate_ham_dist();
     pop_future->m_calculate_mutation_ratio();
+    pop_future->m_num_generation = pop_origin->m_num_generation + 1;
 
     // Deallocation
     offspring_list.clear();
@@ -294,13 +296,15 @@ void Population::print_pop(){
     }
 }
 
-bool Population::is_termination_condition(double thresold, clock_t beg, long consumed_time){
+bool Population::is_termination_condition(clock_t beg){
 
     long total_elapsed = get_consumed_msec(beg);
+    double avg_consumed_time = total_elapsed/(double)m_num_generation;
 
-    if(total_elapsed + consumed_time < (TIME_LIMIT * m_graph->get_num_vtx() / 3000.0) - 500){
+    //fprintf(stdout,"Total elapsed:  %lld\n",total_elapsed);
+    if((total_elapsed + avg_consumed_time) < ((TIME_LIMIT * (m_graph->get_num_vtx() / 3000.0)) - 5000)){
 
-        //if(m_avg_hamming_distance > 0.05) return false;
+        if(m_avg_hamming_distance > 0.02) return false;
         return false;
     }
     return true;
@@ -343,5 +347,8 @@ void Population::m_calculate_mutation_ratio(){
 
     assert(x<=0.5);
 
-    m_mutation_ratio = min + (max-min) * (1-2*x);//cos(x*M_PI);
+    // linear
+    //m_mutation_ratio = min + (max-min) * (1-2*x);//cos(x*M_PI);
+    // cos
+    m_mutation_ratio = min + (max-min) * cos(x*M_PI);
 }

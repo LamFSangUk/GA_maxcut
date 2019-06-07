@@ -17,6 +17,8 @@ private:
     Population* m_pop_cur;
     Population* m_pop_next;
 
+    clock_t m_beg_tick;
+
     double m_convergence_threshold;
 };
 
